@@ -54,8 +54,8 @@ router.put('/:id', (req, res, next) => {
   const upObj = {};
   if(req.body.title) {upObj.title = req.body.title;}
   if(req.body.content) {upObj.content = req.body.content;}
-  return Note.findByIdAndUpdate(req.params.id, {$set: upObj}, {new: true})
-    .then(result => res.status(204).end())
+  Note.findByIdAndUpdate(req.params.id, {$set: upObj}, {new: true})
+    .then(() => res.status(204).end())
     .catch(err => next(err));
 });
 
