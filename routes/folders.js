@@ -5,6 +5,14 @@ const router = express.Router();
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-const Folder = require('../models/note');
+const Note = require('../models/note');
+const Folder = require('../models/folder');
+
+router.get('/', (req, res, next) => {
+  Folder.find()
+    .sort('created')
+    .then(results => res.json(results))
+    .catch(console.error);
+});
 
 module.exports = router;

@@ -4,31 +4,26 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const { MONGODB_URI } = require('../config');
 const Note = require('../models/note');
+const Folder = require('../models/folder')
 
 // Get all notes or get note by searchTerm
-// mongoose.connect(MONGODB_URI)
-//   .then(() => {
-//     // change to req.body.searchTerm
-//     const searchTerm = 'aliquam';   
-//     const filterArr = [];
-//     if(searchTerm){
-//       const regOb = {$regex: RegExp(searchTerm, 'i')};
-//       filterArr.push({title: regOb}, {content: regOb});
-//     }
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    // change to req.body.searchTerm
 
-//     return Note.find({$or: filterArr})
-//       .sort('created')
-//       .then(results => console.log(results))
-//       .catch(console.error);
-//   })
-//   .then(() => {
-//     return mongoose.disconnect()
-//       .then(() => { console.info('Disconnected');});
-//   })
-//   .catch(err => {
-//     console.error(`ERROR: ${err.message}`);
-//     console.error(err);
-//   });
+    return Folder.find()
+      .sort('created')
+      .then(results => console.log(results))
+      .catch(console.error);
+  })
+  .then(() => {
+    return mongoose.disconnect()
+      .then(() => { console.info('Disconnected');});
+  })
+  .catch(err => {
+    console.error(`ERROR: ${err.message}`);
+    console.error(err);
+  });
 
 // Get note by id (endpoint 'api/notes/:id')
 // mongoose.connect(MONGODB_URI)

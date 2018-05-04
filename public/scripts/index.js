@@ -15,6 +15,7 @@ $(document).ready(function () {
       tags
     ]) => {
       store.notes = notes;
+      console.log(notes);
       store.folders = folders;
       store.tags = tags;
       noteful.render();
