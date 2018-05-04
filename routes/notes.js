@@ -23,8 +23,19 @@ router.get('/', (req, res, next) => {
 /* ========== GET/READ A SINGLE ITEM ========== */
 router.get('/:id', (req, res, next) => {
   const searchId = req.params.id;
+  if(searchId.length!==24) {
+    const err = new Error(`${searchId} is not a valid Id!`);
+    err.status = 400;
+    return next(err);
+  }
   Note.findById(searchId)
-    .then(result => {res.json(result);})
+    .then(result => {
+      if(!result) {
+        const err = new Error(`${searchId} is not a valid Id!`);
+        err.status = 404;
+        return next(err);
+      }
+      res.json(result);})
     .catch(err => next(err));
 });
 
@@ -35,8 +46,9 @@ router.post('/', (req, res, next) => {
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
-      const message = `Missing \`${field}\` in request body`;
-      return res.status(400).send(message);
+      const err = new Error(`Missing \`${field}\` in request body`);
+      err.status = 400;
+      return next(err);
     }
   }
   const newNote = {
@@ -44,7 +56,7 @@ router.post('/', (req, res, next) => {
     content: req.body.content
   };
   return Note.create(newNote)
-    .then(result => res.status(201).json(result))
+    .then(result => res.location(`${req.originalUrl}/${result.id}`).status(201).json(result))
     .catch(err => next(err));
 });
 
@@ -52,10 +64,27 @@ router.post('/', (req, res, next) => {
 /* ========== PUT/UPDATE A SINGLE ITEM ========== */
 router.put('/:id', (req, res, next) => {
   const upObj = {};
-  if(req.body.title) {upObj.title = req.body.title;}
+  const searchId = req.params.id;
+  if(!req.body.title){
+    const err = new Error('Missing `title` in request body');
+    err.status = 400;
+    return next(err);
+  }
+  if(searchId.length!==24) {
+    const err = new Error(`${searchId} is not a valid Id!`);
+    err.status = 400;
+    return next(err);
+  }
+  upObj.title = req.body.title;
   if(req.body.content) {upObj.content = req.body.content;}
-  Note.findByIdAndUpdate(req.params.id, {$set: upObj}, {new: true})
-    .then(() => res.status(204).end())
+  Note.findByIdAndUpdate(searchId, {$set: upObj}, {new: true})
+    .then(result => {
+      if(!result) {
+        const err = new Error(`${searchId} is not a valid Id!`);
+        err.status = 404;
+        return next(err);
+      }
+      res.status(200).json(result);})
     .catch(err => next(err));
 });
 

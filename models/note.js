@@ -4,10 +4,8 @@ const mongoose = require('mongoose');
 
 const noteSchema = mongoose.Schema({
   title: {type: String, required: true},
-  content: String,
-  createdAt: Date,
-  updatedAt: Date
-});
+  content: String
+}, {timestamps: true});
 
 noteSchema.set('toObject', {
   transform: (doc, ret) => {
