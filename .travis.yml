@@ -3,10 +3,10 @@ node_js: node
 services: 
   - mongodb
 
-# deploy:
-#     provider: heroku
-#     api_key:
-#       secure: [YOUR-API-KEY]
-#     app: [YOUR-APP-NAME]
-#     on:
-#       repo: [YOUR-APP-REPO]
+deploy:
+    provider: heroku
+    api_key:
+      secure: hvomKxcBFU0SJ0IqXHNXjA
+    app: noteful-app-v3-DOM
+    on:
+      repo: https://github.com/thinkful-ei20/noteful-app-v3-DOM
