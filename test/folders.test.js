@@ -63,174 +63,48 @@ describe('Noteful API - Folders', function () {
         });
     });
 
-    it('should return correct search results for a folderId query', function () {
-      const folderId = 111111111111111111111100;
+    describe('GET /api/folders/:id', function () {
 
-      return Promise.all([
-        Folder.find({ id: folderId }),
-        chai.request(app).get(`/api/notes?folderId=${folderId}`)
-      ])
-        .then(([data, res]) => {
-          expect(res).to.have.status(200);
-          expect(res).to.be.json;
-          expect(res.body).to.be.a('array');
-          expect(res.body).to.have.length(1);
-          expect(res.body[0]).to.be.an('object');
-          expect(res.body[0].id).to.equal(data[0].id);
-        });
+      it('should return correct folder', function () {
+        let data;
+        return Folder.findOne()
+          .then(_data => {
+            data = _data;
+            return chai.request(app).get(`/api/folders/${data.id}`);
+          })
+          .then((res) => {
+            expect(res).to.have.status(200);
+            expect(res).to.be.json;
+  
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.have.keys('id', 'name', 'createdAt', 'updatedAt');
+  
+            expect(res.body.id).to.equal(data.id);
+            expect(res.body.title).to.equal(data.title);
+            expect(res.body.content).to.equal(data.content);
+          });
+      });
+  
+      it('should respond with a 400 for improperly formatted id', function () {
+        const badId = '99-99-99';
+  
+        return chai.request(app)
+          .get(`/api/notes/${badId}`)
+          .then(res => {
+            expect(res).to.have.status(400);
+            expect(res.body.message).to.eq(`${badId} is not a valid Id!`);
+          });
+      });
+  
+      it('should respond with a 404 for an invalid id', function () {
+  
+        return chai.request(app)
+          .get('/api/notes/AAAAAAAAAAAAAAAAAAAAAAAA')
+          .then(res => {
+            expect(res).to.have.status(404);
+          });
+      });
+  
     });
-
-    // it('should return an empty array for an incorrect query', function () {
-    //   const folderId = 'NotValid';
-
-    //   return Promise.all([
-    //     Note.find({ id: folderId }),
-    //     chai.request(app).get(`/api/notes?folderId=${folderId}`)
-    //   ])
-    //     .then(([data, res]) => {
-    //       expect(res).to.have.status(200);
-    //       expect(res).to.be.json;
-    //       expect(res.body).to.be.a('array');
-    //       expect(res.body).to.have.length(data.length);
-    //     });
-    // });
-
   });
-
-  // describe('POST /api/notes', function () {
-
-  //   it('should create and return a new item when provided valid data', function () {
-  //     const newItem = {
-  //       'title': 'The best article about cats ever!',
-  //       'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...'
-  //     };
-  //     let res;
-  //     return chai.request(app)
-  //       .post('/api/notes')
-  //       .send(newItem)
-  //       .then(function (_res) {
-  //         res = _res;
-  //         expect(res).to.have.status(201);
-  //         expect(res).to.have.header('location');
-  //         expect(res).to.be.json;
-  //         expect(res.body).to.be.a('object');
-  //         expect(res.body).to.have.keys('id', 'title', 'content', 'createdAt', 'updatedAt');
-  //         return Note.findById(res.body.id);
-  //       })
-  //       .then(data => {
-  //         expect(res.body.title).to.equal(data.title);
-  //         expect(res.body.content).to.equal(data.content);
-  //       });
-  //   });
-
-  //   it('should return an error when posting an object with a missing "title" field', function () {
-  //     const newItem = {
-  //       'content': 'Lorem ipsum dolor sit amet, sed do eiusmod tempor...'
-  //     };
-
-  //     return chai.request(app)
-  //       .post('/api/notes')
-  //       .send(newItem)
-  //       .then(res => {
-  //         expect(res).to.have.status(400);
-  //         expect(res).to.be.json;
-  //         expect(res.body).to.be.a('object');
-  //         expect(res.body.message).to.equal('Missing `title` in request body');
-  //       });
-  //   });
-
-  // });
-
-  // describe('PUT /api/notes/:id', function () {
-
-  //   it('should update the note when provided proper valid data', function () {
-  //     const updateItem = {
-  //       'title': 'What about dogs?!',
-  //       'content': 'woof woof'
-  //     };
-  //     let data;
-  //     return Note.findOne()
-  //       .then(_data => {
-  //         data = _data;
-  //         return chai.request(app)
-  //           .put(`/api/notes/${data.id}`)
-  //           .send(updateItem);
-  //       })
-  //       .then(function (res) {
-  //         expect(res).to.have.status(200);
-  //         expect(res).to.be.json;
-  //         expect(res.body).to.be.a('object');
-  //         expect(res.body).to.have.keys('id', 'title', 'content', 'createdAt', 'updatedAt');
-
-  //         expect(res.body.id).to.equal(data.id);
-  //         expect(res.body.title).to.equal(updateItem.title);
-  //         expect(res.body.content).to.equal(updateItem.content);
-  //       });
-  //   });
-
-
-  //   it('should respond with a 400 for improperly formatted id', function () {
-  //     const updateItem = {
-  //       'title': 'What about dogs?!',
-  //       'content': 'woof woof'
-  //     };
-  //     const badId = '99-99-99';
-
-  //     return chai.request(app)
-  //       .put(`/api/notes/${badId}`)
-  //       .send(updateItem)
-  //       .then(res => {
-  //         expect(res).to.have.status(400);
-  //         expect(res.body.message).to.eq(`${badId} is not a valid Id!`);
-  //       });
-  //   });
-
-  //   it('should respond with a 404 for an invalid id', function () {
-  //     const updateItem = {
-  //       'title': 'What about dogs?!',
-  //       'content': 'woof woof'
-  //     };
-
-  //     return chai.request(app)
-  //       .put('/api/notes/AAAAAAAAAAAAAAAAAAAAAAAA')
-  //       .send(updateItem)
-  //       .then(res => {
-  //         expect(res).to.have.status(404);
-  //       });
-  //   });
-
-  //   it('should return an error when missing "title" field', function () {
-  //     const updateItem = {
-  //       'foo': 'bar'
-  //     };
-
-  //     return chai.request(app)
-  //       .put('/api/notes/9999')
-  //       .send(updateItem)
-  //       .then(res => {
-  //         expect(res).to.have.status(400);
-  //         expect(res).to.be.json;
-  //         expect(res.body).to.be.a('object');
-  //         expect(res.body.message).to.equal('Missing `title` in request body');
-  //       });
-  //   });
-
-  // });
-
-  // describe('DELETE  /api/notes/:id', function () {
-
-  //   it('should delete an item by id', function () {
-  //     let data;
-  //     return Note.findOne()
-  //       .then(_data => {
-  //         data = _data;
-  //         return chai.request(app).delete(`/api/notes/${data.id}`);
-  //       })
-  //       .then(function (res) {
-  //         expect(res).to.have.status(204);
-  //       });
-  //   });
-
-  // });
-
 });

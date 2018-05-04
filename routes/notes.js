@@ -23,7 +23,7 @@ router.get('/', (req, res, next) => {
 /* ========== GET/READ A SINGLE ITEM ========== */
 router.get('/:id', (req, res, next) => {
   const searchId = req.params.id;
-  if(searchId.length!==24) {
+  if(!mongoose.Types.ObjectId.isValid(searchId)) {
     const err = new Error(`${searchId} is not a valid Id!`);
     err.status = 400;
     return next(err);

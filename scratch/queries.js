@@ -4,17 +4,24 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const { MONGODB_URI } = require('../config');
 const Note = require('../models/note');
-const Folder = require('../models/folder')
+const Folder = require('../models/folder');
 
 // Get all notes or get note by searchTerm
 mongoose.connect(MONGODB_URI)
   .then(() => {
     // change to req.body.searchTerm
-
-    return Folder.find()
-      .sort('created')
-      .then(results => console.log(results))
-      .catch(console.error);
+    const folderId = '11111111111111111111h100';
+    if(!folderId){
+      return Folder.find()
+        .sort('created')
+        .then(results => console.log(results))
+        .catch(console.error);
+    } else {
+      return Folder.findById(folderId)
+        .sort('created')
+        .then(results => console.log(results))
+        .catch(console.error);
+    }
   })
   .then(() => {
     return mongoose.disconnect()
