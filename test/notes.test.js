@@ -211,8 +211,10 @@ describe('Noteful API - Notes', function () {
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
           expect(res.body).to.have.keys('id', 'title', 'folderId', 'tags', 'content', 'createdAt', 'updatedAt');
-
+          expect(res.body.tags).to.be.a('array');
+          res.body.tags.forEach(tag => expect(tag).to.have.keys('id', 'name'));
           expect(res.body.id).to.equal(data.id);
+          expect(res.body.folderId).to.equal(data.folderId.toString());
           expect(res.body.title).to.equal(updateItem.title);
           expect(res.body.content).to.equal(updateItem.content);
         });
