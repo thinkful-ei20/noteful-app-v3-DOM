@@ -18,7 +18,7 @@ router.get('/', (req, res, next) => {
     filterObj.folderId = folderId;
   }
   if (tagId) {
-    filterObj.tagId = tagId;
+    filterObj.tags = tagId;
   }
   Note.find(searchTerm ? {$or: filterArr} : filterObj ? filterObj : {})
     .populate('tags')
