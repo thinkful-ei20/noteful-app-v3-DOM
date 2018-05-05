@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
+
 
 const Note = require('../models/note');
 
@@ -70,7 +70,7 @@ router.put('/:id', (req, res, next) => {
     err.status = 400;
     return next(err);
   }
-  if(searchId.length!==24) {
+  if(searchId && !mongoose.Types.ObjectId.isValid(searchId)) {
     const err = new Error(`${searchId} is not a valid Id!`);
     err.status = 400;
     return next(err);
