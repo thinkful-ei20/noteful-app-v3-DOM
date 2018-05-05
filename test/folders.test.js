@@ -109,7 +109,7 @@ describe('Noteful API - Folders', function () {
 
   describe('POST /api/folders', function () {
 
-    it('should create and return a new item when provided valid data', function () {
+    it('should create and return a new folder when provided valid data', function () {
       const newItem = {
         'name': 'Spoof Folder',
       };
@@ -152,7 +152,7 @@ describe('Noteful API - Folders', function () {
 
   describe('PUT /api/folders/:id', function () {
 
-    it('should update the note when provided proper valid data', function () {
+    it('should update the folder when provided proper valid data', function () {
       const updateItem = {
         'name': 'A Better Title'
       };
